@@ -1,0 +1,32 @@
+$height: 600px;
+$width: 357px;
+
+@mixin vertical-flexbox {
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  @include vertical-flexbox;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: $height;
+  min-width: $width;
+  width: 100%;
+  max-width: $width;
+  max-height: $height;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#root {
+  @include vertical-flexbox;
+  flex: 1;
+}
