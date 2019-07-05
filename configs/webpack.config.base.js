@@ -28,7 +28,6 @@ export default {
   },
 
   output: {
-    publicPath: path.join(__dirname, '..', 'public'),
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
     libraryTarget: 'commonjs2',
@@ -38,6 +37,13 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
+    alias: {
+      '@material-ui/styles': path.resolve(
+        path.join(__dirname, '..'),
+        'node_modules',
+        '@material-ui/styles',
+      ),
+    },
     extensions: ['.js', '.ts', '.tsx', '.json'],
   },
 
