@@ -1,8 +1,9 @@
 {
-  "name": "erb-typescript-example",
-  "productName": "ElectronReact",
-  "version": "0.17.1",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "crater",
+  "productName": "Crater",
+  "private": true,
+  "version": "0.18.0",
+  "description": "Cryptocurrency desktop wallet based on the Stellar Protocol",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -64,17 +65,14 @@
       "app/main.prod.js.map",
       "package.json"
     ],
-    "protocols": [
-      {
-        "name": "Stellar",
-        "schemes": [
-          "web+stellar"
-        ]
-      }
-    ],
+    "protocols": [{
+      "name": "Stellar",
+      "schemes": [
+        "web+stellar"
+      ]
+    }],
     "dmg": {
-      "contents": [
-        {
+      "contents": [{
           "x": 130,
           "y": 220
         },
@@ -121,8 +119,7 @@
     "email": "electronreactboilerplate@gmail.com",
     "url": "https://electron-react-boilerplate.js.org"
   },
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Vikram Rangaraj",
       "email": "vikr01@icloud.com",
       "url": "https://github.com/vikr01"
@@ -195,6 +192,7 @@
     "@babel/register": "^7.0.0",
     "@types/jest": "^23.3.11",
     "@types/keytar": "^4.4.0",
+    "@types/query-string": "^6.3.0",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "@types/react-helmet": "^5.0.8",
