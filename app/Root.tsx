@@ -30,6 +30,10 @@ interface Props {
 }
 
 export default class Root extends Component<Props> {
+  componentDidMount() {
+    this.props.store.dispatch({ type: 'SETUP_EVENT_LISTENERS' });
+  }
+
   render() {
     const { store, history, persistor } = this.props;
     return (

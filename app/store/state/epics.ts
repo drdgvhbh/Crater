@@ -2,13 +2,23 @@ import * as fromActions from './actions';
 
 import { ofType } from '@martin_hotell/rex-tils';
 import { push } from 'connected-react-router';
+import electron from 'electron';
 import keytar from 'keytar';
 import {
   ActionsObservable,
   combineEpics,
   StateObservable,
 } from 'redux-observable';
-import { concat, forkJoin, from, of, pipe } from 'rxjs';
+import {
+  concat,
+  defer,
+  forkJoin,
+  from,
+  fromEventPattern,
+  iif,
+  of,
+  pipe,
+} from 'rxjs';
 import { catchError, flatMap, map, tap, withLatestFrom } from 'rxjs/operators';
 import StellarHDWallet from 'stellar-hd-wallet';
 import StellarSdk from 'stellar-sdk';
@@ -339,6 +349,45 @@ export const sendTransactionEpic = (
     }),
   );
 
+export const openEventsEpic = (
+  action$: ActionsObservable<fromActions.Actions>,
+  state$: StateObservable<RootState>,
+) =>
+  action$.pipe(
+    ofType(fromActions.SETUP_EVENT_LISTENERS),
+    withLatestFrom(state$),
+    flatMap(([action, state]) =>
+      defer(() =>
+        fromEventPattern<[any, string[]]>(
+          (h) => electron.ipcRenderer.on('open', h),
+          (h) => electron.ipcRenderer.removeListener('open', h),
+        ).pipe(
+          map((emitterAndArgs) => emitterAndArgs[1]),
+          tap((argv) => console.log(argv)),
+          flatMap((argv) => {
+            // https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md
+            const sep007Regex = /^(web\+stellar:)(.*)(\?.*)$/;
+            const matches = argv[1].match(sep007Regex);
+            if (!matches) {
+              return of(fromActions.Actions.doNothing());
+            }
+
+            type possibleOperations = 'tx' | 'pay';
+            const op = matches[2] as possibleOperations;
+            switch (op) {
+              case 'tx':
+                return of(fromActions.Actions.doNothing());
+              case 'pay':
+                return of(fromActions.Actions.doNothing());
+              default:
+                return of(fromActions.Actions.doNothing());
+            }
+          }),
+        ),
+      ),
+    ),
+  );
+
 export default combineEpics(
   loginEpic,
   validMnemonicEpic,
@@ -350,4 +399,5 @@ export default combineEpics(
   loadTransactionsEpic,
   loadBaseFeeEpic,
   sendTransactionEpic,
+  openEventsEpic,
 );

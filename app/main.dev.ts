@@ -49,58 +49,78 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+app.setAsDefaultProtocolClient('web+stellar');
+
 /**
  * Add event listeners...
  */
+const hasLock = app.requestSingleInstanceLock();
+if (!hasLock) {
+  console.log(process.argv);
+  mainWindow.webContents.send('open', process.argv);
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+  app.quit();
+} else {
+  console.log(process.argv);
 
-app.on('ready', async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 374,
-    height: 614,
-    maxWidth: 374,
-    maxHeight: 614,
-  });
-
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  app.on('open-url', (event, url) => {
+    event.preventDefault();
+    console.log(url);
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  app.on('ready', async () => {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
+      await installExtensions();
+    }
 
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
-});
+    mainWindow = new BrowserWindow({
+      show: false,
+      width: 374,
+      height: 614,
+      maxWidth: 374,
+      maxHeight: 614,
+    });
+
+    mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+    // @TODO: Use 'ready-to-show' event
+    //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+    mainWindow.webContents.on('did-finish-load', () => {
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+
+      console.log('YOLOSWAG');
+      mainWindow.webContents.send('open', process.argv);
+
+      if (process.env.START_MINIMIZED) {
+        mainWindow.minimize();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    });
+
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
+
+    const menuBuilder = new MenuBuilder(mainWindow);
+    menuBuilder.buildMenu();
+
+    // Remove this if your app does not use auto updates
+    // eslint-disable-next-line
+    new AppUpdater();
+  });
+}

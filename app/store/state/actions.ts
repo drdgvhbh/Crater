@@ -24,6 +24,8 @@ export const SET_BASE_FEE = 'SET_BASE_FEE';
 export const SEND_TRANSACTION = 'SEND_TRANSACTION';
 export const SEND_TRANSACTION_SUCCEEDED = 'SEND_TRANSACTION_SUCCEEDED';
 export const SEND_TRANSACTION_FAILED = 'SEND_TRANSACTION_FAILED';
+export const SETUP_EVENT_LISTENERS = 'SETUP_EVENT_LISTENERS';
+export const DO_NOTHING = 'DO_NOTHING';
 
 export interface SetAccountsPayload {
   accounts: Array<{
@@ -88,6 +90,8 @@ export const Actions = {
     createAction(SEND_TRANSACTION_SUCCEEDED, record),
   sendTransactionFailed: (err: any) =>
     createAction(SEND_TRANSACTION_FAILED, err),
+  setupEvenListeners: () => createAction(SETUP_EVENT_LISTENERS),
+  doNothing: () => createAction(DO_NOTHING),
 };
 
 export type Actions = ActionsUnion<typeof Actions>;

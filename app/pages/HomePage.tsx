@@ -7,7 +7,7 @@ import {
 const HomePage = () => {
   return (
     <div>
-      <a href="web+mystuff:some+data">dsadadadsad</a>
+      <a href="web+stellar:some+data">dsadadadsad</a>
 
       <AssetPieChartConnected />
       <TransactionListConnected />
