@@ -4,6 +4,7 @@ import { ofType } from '@martin_hotell/rex-tils';
 import { push } from 'connected-react-router';
 import electron from 'electron';
 import keytar from 'keytar';
+import queryString from 'query-string';
 import {
   ActionsObservable,
   combineEpics,
@@ -21,7 +22,7 @@ import {
 } from 'rxjs';
 import { catchError, flatMap, map, tap, withLatestFrom } from 'rxjs/operators';
 import StellarHDWallet from 'stellar-hd-wallet';
-import StellarSdk from 'stellar-sdk';
+import StellarSDK from 'stellar-sdk';
 import { SimpleApi } from '../../third-party/coingecko';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
@@ -33,11 +34,12 @@ import {
   mnemonic as getMnemonic,
   publicKey as getPublicKey,
 } from './selectors';
+import { epics  as signatureEpics } from './signature';
 
-const stellarServer = new StellarSdk.Server(
+const stellarServer = new StellarSDK.Server(
   'https://horizon-testnet.stellar.org',
 );
-StellarSdk.Network.useTestNetwork();
+StellarSDK.Network.useTestNetwork();
 
 const MNEMONIC_KEY = 'mnemonic';
 
@@ -212,6 +214,7 @@ export const loadTransactionsEpic = (
     withLatestFrom(state$),
     flatMap(([action, state]) => {
       const publicKey = getPublicKey(state);
+      console.log('lol');
 
       return from(
         stellarServer
@@ -222,7 +225,6 @@ export const loadTransactionsEpic = (
           .call(),
       ).pipe(
         flatMap((collection) => of(collection.records)),
-        pipe(tap((records) => console.log(records))),
         flatMap((records) =>
           forkJoin(
             records.map((record) =>
@@ -310,16 +312,16 @@ export const sendTransactionEpic = (
       } = action;
       return from(stellarServer.loadAccount(keyPair.publicKey())).pipe(
         flatMap((account) => {
-          const transactionBuilder = new StellarSdk.TransactionBuilder(
+          const transactionBuilder = new StellarSDK.TransactionBuilder(
             account,
             {
               fee,
             },
           )
             .addOperation(
-              StellarSdk.Operation.payment({
+              StellarSDK.Operation.payment({
                 destination: recipient,
-                asset: StellarSdk.Asset.native(),
+                asset: StellarSDK.Asset.native(),
                 // asset: new StellarSdk.Asset(asset.type, keyPair.publicKey()),
                 amount: asset.amount.toString(),
               }),
@@ -327,11 +329,11 @@ export const sendTransactionEpic = (
             .setTimeout(30);
 
           if (memo) {
-            transactionBuilder.addMemo(StellarSdk.Memo.text(memo));
+            transactionBuilder.addMemo(StellarSDK.Memo.text(memo));
           }
 
           const transaction = transactionBuilder.build();
-          const signingKeyPair = StellarSdk.Keypair.fromSecret(
+          const signingKeyPair = StellarSDK.Keypair.fromSecret(
             keyPair.secret(),
           );
           transaction.sign(signingKeyPair);
@@ -349,45 +351,6 @@ export const sendTransactionEpic = (
     }),
   );
 
-export const openEventsEpic = (
-  action$: ActionsObservable<fromActions.Actions>,
-  state$: StateObservable<RootState>,
-) =>
-  action$.pipe(
-    ofType(fromActions.SETUP_EVENT_LISTENERS),
-    withLatestFrom(state$),
-    flatMap(([action, state]) =>
-      defer(() =>
-        fromEventPattern<[any, string[]]>(
-          (h) => electron.ipcRenderer.on('open', h),
-          (h) => electron.ipcRenderer.removeListener('open', h),
-        ).pipe(
-          map((emitterAndArgs) => emitterAndArgs[1]),
-          tap((argv) => console.log(argv)),
-          flatMap((argv) => {
-            // https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md
-            const sep007Regex = /^(web\+stellar:)(.*)(\?.*)$/;
-            const matches = argv[1].match(sep007Regex);
-            if (!matches) {
-              return of(fromActions.Actions.doNothing());
-            }
-
-            type possibleOperations = 'tx' | 'pay';
-            const op = matches[2] as possibleOperations;
-            switch (op) {
-              case 'tx':
-                return of(fromActions.Actions.doNothing());
-              case 'pay':
-                return of(fromActions.Actions.doNothing());
-              default:
-                return of(fromActions.Actions.doNothing());
-            }
-          }),
-        ),
-      ),
-    ),
-  );
-
 export default combineEpics(
   loginEpic,
   validMnemonicEpic,
@@ -399,5 +362,5 @@ export default combineEpics(
   loadTransactionsEpic,
   loadBaseFeeEpic,
   sendTransactionEpic,
-  openEventsEpic,
+  signatureEpics,
 );

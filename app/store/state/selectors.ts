@@ -2,12 +2,17 @@ import BigNumber from 'bignumber.js';
 import gradstop from 'gradstop';
 import moment from 'moment';
 import { createSelector } from 'reselect';
+import StellarSDK from 'stellar-sdk';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
 
-const STROOP_TO_XLM = 0.0000001;
+const STROOP_TO_XLM_EXCHANGE_RATE = 0.0000001;
 
-function deriveExchangeRate(
+export function stroopToXLM(stroop: number): number {
+  return stroop * STROOP_TO_XLM_EXCHANGE_RATE;
+}
+
+export function deriveExchangeRate(
   currency1: string,
   currency2: string,
   map: { [key: string]: { [key: string]: number } },
@@ -38,15 +43,23 @@ export const accountNumber = createSelector(
   wallet,
   (w) => w.selectedAccountNumber || 0,
 );
-export const publicKey = createSelector(
+export const accounts = createSelector(
   wallet,
+  (w) => (w.accounts ? w.accounts : {}),
+);
+export const publicKey = createSelector(
+  accounts,
   accountNumber,
-  (w, n) => w.accounts[n] || '',
+  (a, n) => a[n] || '',
+);
+export const assets = createSelector(
+  wallet,
+  (w) => w.assets || {},
 );
 export const accountAssets = createSelector(
-  wallet,
+  assets,
   accountNumber,
-  (w, n) => w.assets[n] || [],
+  (a, n) => a[n] || [],
 );
 export const exchangeRates = createSelector(
   wallet,
@@ -92,7 +105,7 @@ export const colorPalette = createSelector(
 );
 export const allTransactions = createSelector(
   wallet,
-  (w) => w.transactions,
+  (w) => w.transactions || {},
 );
 export const transactions = createSelector(
   allTransactions,
@@ -112,7 +125,7 @@ export const netTrxEarningsInUSD = createSelector(
   (trxs, rates, o, pk) => {
     const trxCosts = trxs.map((trx) => {
       const exchangeRate = deriveExchangeRate('xlm', 'usd', rates);
-      const feeCost = trx.fee_paid * STROOP_TO_XLM * exchangeRate;
+      const feeCost = stroopToXLM(trx.fee_paid) * exchangeRate;
       const totalOpCost = trx.operations
         .map((opID) => {
           const op = o[opID];
@@ -190,7 +203,7 @@ export const baseFee = createSelector(
 
 export const baseFeeInXLM = createSelector(
   wallet,
-  (w) => w.baseFee * STROOP_TO_XLM,
+  (w) => stroopToXLM(w.baseFee),
 );
 
 export const baseFeeWithUSD = createSelector(
@@ -200,4 +213,19 @@ export const baseFeeWithUSD = createSelector(
     xlm: fee,
     usd: fee * deriveExchangeRate('xlm', 'usd', rates),
   }),
+);
+
+const signatureState = createSelector(
+  wallet,
+  (w) => w.signature,
+);
+
+export const signatureTransactionEnvelope = createSelector(
+  signatureState,
+  (s) =>
+    new StellarSDK.Transaction(
+      StellarSDK.xdr.TransactionEnvelope.fromXDR(
+        Buffer.from(decodeURIComponent(s.txnEnvXDR), 'base64'),
+      ),
+    ),
 );

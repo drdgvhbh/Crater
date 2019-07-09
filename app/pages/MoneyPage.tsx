@@ -17,14 +17,20 @@ import React, { useEffect, useState } from 'react';
 import NumberFormat from 'react-number-format';
 import Select from 'react-select';
 import StellarSDK from 'stellar-sdk';
-import { CryptoCurrencyIcon, CurrencyFormat } from '../components';
+import {
+  CryptoCurrencyIcon,
+  CurrencyFormat,
+  FeeConnected,
+} from '../components';
 import { Asset } from '../store/state/reducer';
+import { stroopToXLM } from '../store/state/selectors';
 import { MoneyPageActions, MoneyPageState } from './MoneyPageConnected';
 
 const styles = () =>
   createStyles({
     assetOption: {
       display: 'flex',
+      width: '100%',
     },
     assetDominationSwitcher: {
       transform: 'rotate(90deg)',
@@ -176,7 +182,7 @@ const MoneyPage = (
                   assetAmount: (() => {
                     if (asset) {
                       if (asset.type === 'xlm') {
-                        return asset.amount - baseFee.xlm;
+                        return asset.amount - stroopToXLM(baseFee);
                       }
 
                       return asset.amount;
@@ -215,27 +221,7 @@ const MoneyPage = (
         </Grid>
         <Grid item xs={12}>
           <InputLabel htmlFor="fee-input">Fee</InputLabel>
-          <TextField
-            id="fee-input"
-            fullWidth
-            InputProps={{
-              readOnly: true,
-              inputComponent: CurrencyFormat as any,
-              inputProps: {
-                assetAmount: baseFee.xlm,
-                assetType: 'XLM',
-              },
-            }}
-            value={baseFee.xlm}
-            helperText={
-              asset
-                ? new Intl.NumberFormat('en-CA', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(baseFee.usd)
-                : ''
-            }
-          />
+          <FeeConnected stroops={baseFee} />
         </Grid>
         <Grid item xs={12}>
           <Button

@@ -1,6 +1,5 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core';
 import IconButton, { IconButtonProps } from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/styles';
 import React from 'react';
 
 const styles = (theme: Theme) =>
@@ -18,7 +17,7 @@ const BackRocketshipButton = (
 
   return (
     <IconButton {...props}>
-      <img className={classes.icon} src={'/rocketship-back-icon.png'} />
+      <img className={classes.icon} src={'./rocketship-back-icon.png'} />
     </IconButton>
   );
 };

@@ -5,7 +5,7 @@ import { walletActions } from '../store/state';
 import {
   account,
   accountAssets,
-  baseFeeWithUSD,
+  baseFee,
   exchangeRates,
 } from '../store/state/selectors';
 import MoneyPage from './MoneyPage';
@@ -14,7 +14,7 @@ const mapStateToProps = (state: RootState) => ({
   assets: accountAssets(state),
   exchangeRates: exchangeRates(state),
   account: account(state),
-  baseFee: baseFeeWithUSD(state),
+  baseFee: baseFee(state),
 });
 
 const dispatchProps = {

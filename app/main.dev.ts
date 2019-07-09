@@ -90,6 +90,9 @@ if (!hasLock) {
       height: 614,
       maxWidth: 374,
       maxHeight: 614,
+      webPreferences: {
+        nodeIntegration: true
+      },
     });
 
     mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -101,7 +104,6 @@ if (!hasLock) {
         throw new Error('"mainWindow" is not defined');
       }
 
-      console.log('YOLOSWAG');
       mainWindow.webContents.send('open', process.argv);
 
       if (process.env.START_MINIMIZED) {

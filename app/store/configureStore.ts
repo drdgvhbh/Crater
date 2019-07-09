@@ -3,8 +3,6 @@ import { createHashHistory, createMemoryHistory } from 'history';
 import { applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createEpicMiddleware } from 'redux-observable';
-import { persistReducer, persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
 import { rootEpic } from './rootEpic';
 import { createRootReducer } from './rootReducer';
 export const history = createHashHistory();
@@ -21,24 +19,16 @@ export type RootState = Exclude<
 
 const rootReducer = createRootReducer(history);
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export function configureStore(preloadedState?: RootState) {
   const store = createStore(
-    persistedReducer, // root reducer with router state
+    rootReducer, // root reducer with router state
     preloadedState,
     composeWithDevTools(
       applyMiddleware(routerMiddleware(history), epicMiddleware),
     ),
   );
 
-  const persistor = persistStore(store);
-
   epicMiddleware.run(rootEpic);
 
-  return { store, persistor };
+  return { store };
 }

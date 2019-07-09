@@ -8,8 +8,9 @@ import {
   ListItemText,
   Theme,
   Typography,
+  withStyles,
+  WithStyles,
 } from '@material-ui/core';
-import { withStyles, WithStyles } from '@material-ui/styles';
 import startcase from 'lodash.startcase';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -71,7 +72,6 @@ const TransactionList = ({ transactions, classes }: TransactionListProps) => {
               </ListItem>
               <Collapse in={openIndex === idx}>
                 <TransactionOperationDetailsConnected
-                  transactionFee={trx.fee_paid}
                   operationIDs={trx.operations}
                 />
               </Collapse>

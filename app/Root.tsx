@@ -1,17 +1,13 @@
 import { createMuiTheme } from '@material-ui/core';
-import { ThemeProvider } from '@material-ui/styles';
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import { ConnectedRouter } from 'connected-react-router';
 import { History } from 'history';
 import * as React from 'react';
 import { Component } from 'react';
+import { hot } from 'react-hot-loader/root';
 import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router';
 import { Store } from 'redux';
-import { Persistor } from 'redux-persist';
-import { PersistGate } from 'redux-persist/integration/react';
-import { AppConnected } from './components/AppConnected';
-import { MainPage, NewWalletPage } from './pages';
-import routes from './routes.json';
+import Router from './Router';
 
 const theme = createMuiTheme({
   palette: {
@@ -26,36 +22,21 @@ const theme = createMuiTheme({
 interface Props {
   store: Store<any>;
   history: History<any>;
-  persistor: Persistor;
 }
 
-export default class Root extends Component<Props> {
-  componentDidMount() {
-    this.props.store.dispatch({ type: 'SETUP_EVENT_LISTENERS' });
-  }
-
+class Root extends Component<Props> {
   render() {
-    const { store, history, persistor } = this.props;
+    const { store, history } = this.props;
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <ConnectedRouter history={history}>
-              <>
-                <Switch>
-                  <Route path={routes.HOME} exact component={AppConnected} />
-                  <Route path={routes.MAIN} exact component={MainPage} />
-                  <Route
-                    path={routes.NEW_WALLET}
-                    exact
-                    component={NewWalletPage}
-                  />
-                </Switch>
-              </>
-            </ConnectedRouter>
-          </PersistGate>
+          <ConnectedRouter history={history}>
+            <Router />
+          </ConnectedRouter>
         </Provider>
       </ThemeProvider>
     );
   }
 }
+
+export default hot(Root);

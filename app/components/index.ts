@@ -5,3 +5,6 @@ export { default as TransactionList } from './TransactionList';
 export { TransactionListConnected } from './TransactionListConnected';
 export { default as CryptoCurrencyIcon } from './CryptoCurrencyIcon';
 export { default as CurrencyFormat } from './CurrencyFormat';
+export { default as UnverifiedTransaction } from './UnverifiedTransaction';
+export { default as Fee } from './Fee';
+export { FeeConnected } from './FeeConnected';

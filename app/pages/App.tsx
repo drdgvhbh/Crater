@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Button,
+  createStyles,
   FormControl,
   FormHelperText,
   TextField,
   Theme,
   Typography,
+  withStyles,
+  WithStyles,
 } from '@material-ui/core';
-import { createStyles, withStyles, WithStyles } from '@material-ui/styles';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 
@@ -83,7 +85,7 @@ const App = (props: Props) => {
       <div className={classes.header}>
         <img
           className={classes.splashImage}
-          src="/crater.png"
+          src="./crater.png"
           alt="crater-icon"
         />
         <div className={classes.headerTextContainer}>

@@ -1,5 +1,4 @@
-import { createStyles, Icon, withStyles } from '@material-ui/core';
-import { WithStyles } from '@material-ui/styles';
+import { createStyles, Icon, withStyles, WithStyles } from '@material-ui/core';
 import XLM from 'cryptocoins-icons/SVG/XLM.svg';
 import React from 'react';
 

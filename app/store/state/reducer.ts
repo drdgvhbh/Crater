@@ -1,6 +1,7 @@
 import produce from 'immer';
 import StellarSdk from 'stellar-sdk';
 import * as fromActions from './actions';
+import { signatureReducer } from './signature';
 
 export interface AssetWithUSDValue extends Asset {
   usd: number;
@@ -65,8 +66,8 @@ export const initialState = {
 };
 export type State = typeof initialState;
 
-export const reducer = (
-  state = initialState,
+export const walletReducer = (
+  state: State,
   action: fromActions.Actions,
 ): State =>
   produce(state, (draft) => {
@@ -114,3 +115,15 @@ export const reducer = (
         break;
     }
   });
+
+type CombinedState = State & { signature: ReturnType<typeof signatureReducer> };
+
+export const reducer = (
+  state = { ...initialState } as CombinedState,
+  action: fromActions.Actions,
+): CombinedState => {
+  return {
+    ...walletReducer(state, action),
+    signature: signatureReducer(state.signature, action as any),
+  };
+};

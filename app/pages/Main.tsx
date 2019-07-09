@@ -1,6 +1,17 @@
-import { Button, Icon, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import {
+  Button,
+  Icon,
+  Paper,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+  withStyles,
+  WithStyles,
+  createStyles,
+} from '@material-ui/core';
+import Signature from '@material-ui/icons/Edit';
 import Home from '@material-ui/icons/Home';
-import { createStyles, withStyles, WithStyles } from '@material-ui/styles';
 import XLM from 'cryptocoins-icons/SVG/XLM.svg';
 import React, { useState } from 'react';
 import StellarHDWallet from 'stellar-hd-wallet';
@@ -10,6 +21,7 @@ import TruncatedPublicKey from '../components/TruncatedPublicKey';
 import { account } from '../store/state/selectors';
 import HomePage from './HomePage';
 import { MoneyPageConnected } from './MoneyPageConnected';
+import { SigningPageConnected } from './SigningPageConnected';
 
 const styles = () =>
   createStyles({
@@ -35,7 +47,7 @@ const MainPage = ({
   mnemonic,
   classes,
 }: MainProps) => {
-  console.log(StellarHDWallet.fromMnemonic(mnemonic).getSecret(0));
+  // console.log(StellarHDWallet.fromMnemonic(mnemonic).getSecret(0));
 
   const [tab, setTab] = useState(0);
 
@@ -43,8 +55,15 @@ const MainPage = ({
     <div>
       <Paper>
         <Tabs value={tab} onChange={(_, idx) => setTab(idx)}>
-          <Tab icon={<Home />} />
-          <Tab icon={<CryptoCurrencyIcon cryptoCurrencyAcronym={'xlm'} />} />
+          <Tooltip title={'Home'}>
+            <Tab icon={<Home />} />
+          </Tooltip>
+          <Tooltip title={'Payment'}>
+            <Tab icon={<CryptoCurrencyIcon cryptoCurrencyAcronym={'xlm'} />} />
+          </Tooltip>
+          <Tooltip title={'Signature'}>
+            <Tab icon={<Signature />} />
+          </Tooltip>
         </Tabs>
       </Paper>
       <div className={classes.topNav}>
@@ -61,6 +80,7 @@ const MainPage = ({
       </div>
       {tab === 0 && <HomePage />}
       {tab === 1 && <MoneyPageConnected />}
+      {tab === 2 && <SigningPageConnected />}
     </div>
   );
 };

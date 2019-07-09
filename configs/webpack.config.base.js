@@ -5,6 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { dependencies } from '../package.json';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 export default {
   externals: [...Object.keys(dependencies || {})],
@@ -38,11 +39,7 @@ export default {
    */
   resolve: {
     alias: {
-      '@material-ui/styles': path.resolve(
-        path.join(__dirname, '..'),
-        'node_modules',
-        '@material-ui/styles',
-      ),
+      'react-dom': '@hot-loader/react-dom',
     },
     extensions: ['.js', '.ts', '.tsx', '.json'],
   },
@@ -51,7 +48,6 @@ export default {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
     }),
-
-    new webpack.NamedModulesPlugin(),
+    new ForkTsCheckerWebpackPlugin(),
   ],
 };

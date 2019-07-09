@@ -22,7 +22,6 @@ const styles = (theme: Theme) =>
   });
 
 interface TransactionOperationDetailsProps extends WithStyles<typeof styles> {
-  transactionFee: number;
   operationIDs: string[];
   getOperations: OperationsSelector;
   walletPublicKey: string;

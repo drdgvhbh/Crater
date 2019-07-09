@@ -5,9 +5,9 @@ import {
   ListItemText,
   Typography,
   withStyles,
+  WithStyles,
 } from '@material-ui/core';
 import { TypographyProps } from '@material-ui/core/Typography';
-import { WithStyles } from '@material-ui/styles';
 import moment from 'moment';
 import React from 'react';
 import { PaymentOperationRecord } from '../store/state/reducer';
