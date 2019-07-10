@@ -18,7 +18,7 @@ const reducer = (state = initialState, action: fromActions.Actions) =>
     switch (action.type) {
       case fromActions.SET_SIGNATURE_OPERATIONS:
         draft.operations.length = 0;
-        draft.operations.push(...draft.operations);
+        draft.operations.push(...action.payload);
         break;
       default:
         break;
