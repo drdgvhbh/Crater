@@ -34,7 +34,7 @@ import {
   mnemonic as getMnemonic,
   publicKey as getPublicKey,
 } from './selectors';
-import { epics  as signatureEpics } from './signature';
+import { epics as signatureEpics } from './signature';
 
 const stellarServer = new StellarSDK.Server(
   'https://horizon-testnet.stellar.org',
@@ -214,7 +214,6 @@ export const loadTransactionsEpic = (
     withLatestFrom(state$),
     flatMap(([action, state]) => {
       const publicKey = getPublicKey(state);
-      console.log('lol');
 
       return from(
         stellarServer

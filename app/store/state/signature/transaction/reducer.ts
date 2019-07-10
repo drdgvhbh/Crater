@@ -11,6 +11,8 @@ export interface Operation {
 }
 
 export const initialState = {
+  sourceAccount: '',
+  sequenceNumber: 0,
   operations: [] as Operation[],
 };
 const reducer = (state = initialState, action: fromActions.Actions) =>
@@ -20,6 +22,10 @@ const reducer = (state = initialState, action: fromActions.Actions) =>
         draft.operations.length = 0;
         draft.operations.push(...action.payload);
         break;
+      case fromActions.SET_SIGNING_TXN_SOURCE_ACCOUNT:
+        draft.sourceAccount = action.payload;
+      case fromActions.SET_SIGNING_TXN_SEQUENCE_NUMBER:
+        draft.sequenceNumber = Number(action.payload);
       default:
         break;
     }

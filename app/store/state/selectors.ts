@@ -229,3 +229,8 @@ export const signatureTransactionEnvelope = createSelector(
       ),
     ),
 );
+
+export const pendingTransactionSelector = createSelector(
+  signatureState,
+  (s) => s.transaction,
+);

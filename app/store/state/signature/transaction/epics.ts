@@ -4,8 +4,8 @@ import {
   combineEpics,
   StateObservable,
 } from 'redux-observable';
-import { of } from 'rxjs';
-import { concat, flatMap, withLatestFrom } from 'rxjs/operators';
+import { concat, of } from 'rxjs';
+import { flatMap, withLatestFrom } from 'rxjs/operators';
 import { RootState } from '../../../configureStore';
 import * as rootActions from '../actions';
 import * as fromActions from './actions';
@@ -33,7 +33,17 @@ export const transactionEpic = (
             throw new Error('not implemented');
         }
       });
-      return of(fromActions.Actions.setSigningTransactionOperations(ops));
+      return concat(
+        ...[
+          of(fromActions.Actions.setSigningTransactionOperations(ops)),
+          of(fromActions.Actions.setSigningTxnSourceAct(action.payload.source)),
+          of(
+            fromActions.Actions.setSigningTxnSequenceNumber(
+              action.payload.sequence,
+            ),
+          ),
+        ],
+      );
     }),
   );
 
