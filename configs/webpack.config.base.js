@@ -4,8 +4,8 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import { dependencies } from '../package.json';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import { dependencies } from '../package.json';
 
 export default {
   externals: [...Object.keys(dependencies || {})],
@@ -40,6 +40,7 @@ export default {
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',
+      '@/*': path.join(__dirname, '..', 'app'),
     },
     extensions: ['.js', '.ts', '.tsx', '.json'],
   },

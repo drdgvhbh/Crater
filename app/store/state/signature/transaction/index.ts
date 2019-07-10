@@ -1,2 +1,2 @@
 export { default as epics } from './epics';
-export { default as reducer } from './reducer';
+export { default as reducer, Operation } from './reducer';
