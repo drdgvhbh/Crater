@@ -16,7 +16,7 @@ export const initialState = {
 const reducer = (state = initialState, action: fromActions.Actions) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case fromActions.SET_SIGNATURE_OPERATIONS:
+      case fromActions.SET_SIGNING_TXN_OPS:
         draft.operations.length = 0;
         draft.operations.push(...action.payload);
         break;

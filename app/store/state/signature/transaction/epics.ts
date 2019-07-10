@@ -33,7 +33,7 @@ export const transactionEpic = (
             throw new Error('not implemented');
         }
       });
-      return of(fromActions.Actions.setSignatureOperations(ops));
+      return of(fromActions.Actions.setSigningTransactionOperations(ops));
     }),
   );
 
