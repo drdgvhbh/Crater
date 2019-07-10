@@ -16,7 +16,7 @@ export const transactionEpic = (
   state$: StateObservable<RootState>,
 ) =>
   action$.pipe(
-    ofType(rootActions.EMIT_SIGN_TRANSACTION_OPERATION),
+    ofType(rootActions.START_SIGN_TRANSACTION_FLOW),
     withLatestFrom(state$),
     flatMap(([action]) => {
       const tx = action.payload;

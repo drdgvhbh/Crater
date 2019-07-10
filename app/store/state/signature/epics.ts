@@ -64,7 +64,7 @@ export const openEventsEpic = (
                 ).pipe(
                   tap((tx) => console.log(tx)),
                   flatMap((tx) =>
-                    of(fromActions.Actions.emitSignTransactionOperation(tx)),
+                    of(fromActions.Actions.startSignTransactionFlow(tx)),
                   ),
                 );
               case 'pay':
