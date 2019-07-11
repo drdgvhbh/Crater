@@ -1,12 +1,15 @@
 import { connect } from 'react-redux';
 
 import { RootState } from '../store/configureStore';
-import { signatureTransactionEnvelope } from '../store/state/selectors';
+import { pendingTransaction } from '../store/state/selectors';
 import SigningPage from './SigningPage';
 
-const mapStateToProps = (state: RootState) => ({
-  transaction: signatureTransactionEnvelope(state),
-});
+const mapStateToProps = (state: RootState) => {
+  const txn = pendingTransaction(state);
+  return {
+    transaction: { ...txn, fee: txn.fee.stroops },
+  };
+};
 
 const dispatchProps = {};
 

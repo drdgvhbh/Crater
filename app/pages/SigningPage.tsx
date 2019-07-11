@@ -4,8 +4,6 @@ import { UnverifiedTransaction } from '../components';
 import { SigningPageActions, SigningPageState } from './SigningPageConnected';
 
 export const SigningPage = (props: SigningPageState & SigningPageActions) => {
-  console.log(props.transaction);
-
   return (
     <Box paddingLeft={2} paddingRight={2}>
       <Typography variant="h6">Sign a Transaction</Typography>

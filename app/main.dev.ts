@@ -91,7 +91,7 @@ if (!hasLock) {
       maxWidth: 374,
       maxHeight: 614,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
       },
     });
 
@@ -104,6 +104,7 @@ if (!hasLock) {
         throw new Error('"mainWindow" is not defined');
       }
 
+      console.log(process.argv);
       mainWindow.webContents.send('open', process.argv);
 
       if (process.env.START_MINIMIZED) {

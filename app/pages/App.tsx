@@ -49,24 +49,11 @@ const styles = (theme: Theme) =>
 interface Props extends WithStyles<typeof styles> {
   isMnemonicValid: boolean;
   login: (mnemonic: string) => void;
-  fetchPreexistingMnemonic: () => void;
-  fetchBaseFee: () => void;
 }
 
 const App = (props: Props) => {
-  const {
-    classes,
-    login,
-    isMnemonicValid,
-    fetchPreexistingMnemonic,
-    fetchBaseFee,
-  } = props;
+  const { classes, login, isMnemonicValid } = props;
   const [mnemonic, setMnemonic] = useState<string>('');
-
-  useEffect(() => {
-    fetchPreexistingMnemonic();
-    fetchBaseFee();
-  }, [fetchPreexistingMnemonic]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

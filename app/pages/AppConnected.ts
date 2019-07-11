@@ -10,9 +10,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const dispatchProps = {
-  login: walletActions.login,
-  fetchPreexistingMnemonic: walletActions.fetchPreexistingMnemonic,
-  fetchBaseFee: walletActions.fetchBaseFee,
+  login: walletActions.login
 };
 
 export const AppConnected = connect(

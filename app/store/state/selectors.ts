@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import gradstop from 'gradstop';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { createSelector } from 'reselect';
 import StellarSDK from 'stellar-sdk';
 import { isPaymentOperation } from '../../third-party/stellar';
@@ -220,17 +220,20 @@ const signatureState = createSelector(
   (w) => w.signature,
 );
 
-export const signatureTransactionEnvelope = createSelector(
+export const pendingTransaction = createSelector(
   signatureState,
-  (s) =>
-    new StellarSDK.Transaction(
-      StellarSDK.xdr.TransactionEnvelope.fromXDR(
-        Buffer.from(decodeURIComponent(s.txnEnvXDR), 'base64'),
-      ),
-    ),
-);
-
-export const pendingTransactionSelector = createSelector(
-  signatureState,
-  (s) => s.transaction,
+  exchangeRates,
+  (s, rates) => ({
+    ...s.transaction,
+    timebounds: s.transaction.timebounds.map((datetime) =>
+      moment(datetime),
+    ) as [Moment, Moment],
+    fee: {
+      stroops: s.transaction.fee,
+      xlm: stroopToXLM(s.transaction.fee),
+      usd:
+        stroopToXLM(s.transaction.fee) *
+        deriveExchangeRate('xlm', 'usd', rates),
+    },
+  }),
 );

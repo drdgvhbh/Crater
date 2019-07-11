@@ -163,11 +163,13 @@ export const setMnemonicEpic = (
       );
     }),
     flatMap((data) =>
-      concat([
-        fromActions.Actions.setAccounts({ accounts: data }),
-        fromActions.Actions.updateExchangeRates(),
-        fromActions.Actions.loadTransactions({ count: LOAD_TRX_COUNT }),
-      ]),
+      concat(
+        ...[
+          of(fromActions.Actions.setAccounts({ accounts: data })),
+          of(fromActions.Actions.updateExchangeRates()),
+          of(fromActions.Actions.loadTransactions({ count: LOAD_TRX_COUNT })),
+        ],
+      ),
     ),
   );
 
@@ -266,13 +268,17 @@ export const loadTransactionsEpic = (
             });
           });
 
-          return concat([
-            fromActions.Actions.setTransactionOperations(operations),
-            fromActions.Actions.setTransactions({
-              publicKey: getPublicKey(state),
-              transactions,
-            }),
-          ]);
+          return concat(
+            ...[
+              of(fromActions.Actions.setTransactionOperations(operations)),
+              of(
+                fromActions.Actions.setTransactions({
+                  publicKey: getPublicKey(state),
+                  transactions,
+                }),
+              ),
+            ],
+          );
         }),
       );
     }),

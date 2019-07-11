@@ -1,4 +1,5 @@
 import { ofType } from '@martin_hotell/rex-tils';
+import debug from 'debug';
 import electron from 'electron';
 import queryString from 'query-string';
 import {
@@ -35,7 +36,7 @@ export const openEventsEpic = (
           (h) => electron.ipcRenderer.removeListener('open', h),
         ).pipe(
           map((emitterAndArgs) => emitterAndArgs[1]),
-          tap((argv) => console.log(argv)),
+          tap((argv) => debug('app:events:open')(argv)),
           flatMap((argv) => {
             // https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md
             const sep007Regex = /^(web\+stellar:)(.*)(\?.*)$/;
@@ -46,15 +47,13 @@ export const openEventsEpic = (
             if (!matches) {
               return of(fromActions.Actions.doNothing());
             }
-
+ 
             type possibleOperations = 'tx' | 'pay';
             const op = matches[2] as possibleOperations;
             const queryParams = matches[3];
-            console.log(queryParams);
             switch (op) {
               case 'tx':
                 const { xdr } = queryString.parse(queryParams) as OpParams;
-                console.log(xdr);
                 return of(
                   new StellarSDK.Transaction(
                     StellarSDK.xdr.TransactionEnvelope.fromXDR(
@@ -62,7 +61,6 @@ export const openEventsEpic = (
                     ),
                   ),
                 ).pipe(
-                  tap((tx) => console.log(tx)),
                   flatMap((tx) =>
                     of(fromActions.Actions.startSignTransactionFlow(tx)),
                   ),

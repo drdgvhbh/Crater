@@ -5,19 +5,17 @@ import {
   Grid,
   InputLabel,
   TextField as NativeTextField,
-  Theme,
   Typography,
   withStyles,
   WithStyles,
 } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField';
-import moment from 'moment';
+import { Moment } from 'moment';
 import React from 'react';
-import StellarSDK from 'stellar-sdk';
+import { Operation } from '../store/state/signature/transaction';
 import CopyToClipboardTooltip from './CopyToClipboardButton';
 import { FeeConnected } from './FeeConnected';
-
-type StellarTransaction = StellarSDK.Transaction;
+import ManageDataOperation from './ManageDataOperation';
 
 const styles = () =>
   createStyles({
@@ -28,7 +26,14 @@ const styles = () =>
   });
 
 export interface TransactionProps {
-  transaction: StellarTransaction;
+  transaction: {
+    readonly sourceAccount: string;
+    readonly sequenceNumber: number;
+    readonly memo: string;
+    readonly fee: number;
+    readonly timebounds: [Moment, Moment];
+    readonly operations: Operation[];
+  };
 }
 
 const TextField = (props: TextFieldProps) => {
@@ -49,11 +54,15 @@ const UnverifiedTransaction = (
   const {
     transaction: {
       operations,
+      sourceAccount,
+      sequenceNumber,
       memo,
-      timeBounds,
       fee,
-      sequence: sequenceNumber,
-      source: sourceAccount,
+      timebounds,
+      // timeBounds,
+      // fee,
+      // sequence: sequenceNumber,
+      // source: sourceAccount,
     },
   } = props;
   const sourceAccountTruncated = `${sourceAccount.slice(
@@ -88,22 +97,18 @@ const UnverifiedTransaction = (
           <TextField id="sequence-number" fullWidth value={sequenceNumber} />
         </Box>
       </Grid>
-      {timeBounds && (
+      {timebounds && (
         <Grid item xs={12}>
           <InputLabel htmlFor="timebounds">Timebounds</InputLabel>
           <Box marginTop={1} id="timebounds">
             <Button variant="outlined">
               <Typography variant="caption">
-                {moment
-                  .unix(Number(timeBounds.minTime))
-                  .format('MM/DD/YY hh:mm:a')}
+                {timebounds[0].format('MM/DD/YY hh:mm:a')}
               </Typography>
             </Button>
             <Button variant="outlined">
               <Typography variant="caption">
-                {moment
-                  .unix(Number(timeBounds.maxTime))
-                  .format('MM/DD/YY hh:mm:a')}
+                {timebounds[1].format('MM/DD/YY hh:mm:a')}
               </Typography>
             </Button>
           </Box>
@@ -111,14 +116,31 @@ const UnverifiedTransaction = (
       )}
       {memo && (
         <Grid item xs={12}>
-          {memo.value}
+          {memo}
         </Grid>
       )}
       <Grid item xs={12}>
         <InputLabel>Operations</InputLabel>
-        {operations.map((op) => (
-          <div>{op.type}</div>
-        ))}
+        {operations.map((op) => {
+          return (
+            <Box padding={2}>
+              {(() => {
+                switch (op.type) {
+                  case 'manageData':
+                    return (
+                      <ManageDataOperation
+                        sourceAccount={op.sourceAccount}
+                        value={op.value}
+                        name={op.name}
+                      />
+                    );
+                  default:
+                    return null;
+                }
+              })()}
+            </Box>
+          );
+        })}
       </Grid>
     </Grid>
   );
