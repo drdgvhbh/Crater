@@ -38,12 +38,6 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
-    new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
-    }),
-
     /**
      * Create global constants which can be configured at compile time.
      *

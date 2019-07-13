@@ -204,11 +204,5 @@ export default merge.smart(baseConfig, {
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
-
-    new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
-    }),
   ],
 });
