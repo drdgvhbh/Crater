@@ -2,7 +2,7 @@ import {
   TransactionChallengeVerificationError,
   TransactionChallengeVerificationErrorType,
   verify,
-} from '@/sep10-challenge';
+} from '@/modules/sep10-challenge';
 import crypto from 'crypto';
 import moment, { Moment } from 'moment';
 import StellarSDK, { Keypair } from 'stellar-sdk';
