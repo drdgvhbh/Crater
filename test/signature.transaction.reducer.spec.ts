@@ -28,6 +28,7 @@ describe('Reducer Tests', () => {
         fee: 100,
         operations: [op],
         timebounds: [moment(), moment().add(5, 'minutes')],
+        signatures: [],
       };
     });
 

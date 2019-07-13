@@ -84,11 +84,11 @@ describe('sep-0010 web authentication', () => {
         clientKP,
         serverKP.publicKey(),
       ).toPromise();
-      try {
-        await expect(promise).rejects.toThrowError(ValidationError);
-      } finally {
-        spy.mockClear();
-      }
+      expect(promise)
+        .rejects.toThrowError(ValidationError)
+        .then(() => {
+          spy.mockClear();
+        });
     });
 
     it('should allow extraneous properties for GET/ challenge transaction', async () => {
@@ -108,7 +108,7 @@ describe('sep-0010 web authentication', () => {
         serverKP.publicKey(),
       ).toPromise();
       try {
-        await expect(promise);
+        await promise;
       } catch (err) {
         expect(err).not.toBeInstanceOf(ValidationError);
       } finally {
@@ -126,33 +126,40 @@ describe('sep-0010 web authentication', () => {
       expect(promise).rejects.toThrowError(InsecureAuthServerURL);
     });
 
-    it('should verify challenge transaction', async () => {
+    it('should verify challenge transaction', (done) => {
       const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
-      spy.mockReturnValueOnce(
+      spy.mockImplementationOnce(() =>
         of({
           response: {
             transaction: txe.toEnvelope().toXDR('base64'),
           },
         }),
       );
-      (spy as any).post = jest.fn(() => of());
+      const post = jest.fn(() => of({}));
+      require('rxjs/ajax').ajax.post = post;
+      //  ((spy as jest.Mock).mock as any).post = jest.fn(() => of());
       const authServerURL = new url.URL('', 'https://mybank.com');
       const promise = authenticateClientSide(
         authServerURL,
         clientKP,
         serverKP.publicKey(),
       ).toPromise();
-      await promise;
-      const { verify } = require('@/modules/sep10-challenge');
-      expect(verify).toBeCalledWith(expect.anything(), {
-        serverSigningKey: serverKP.publicKey(),
-        clientSigningKey: clientKP.publicKey(),
-        ensureTransactionIsSignedByClient: false,
-      });
-      spy.mockClear();
+      expect(promise)
+        .resolves.toBeTruthy()
+        .then(() => {
+          const { verify } = require('@/modules/sep10-challenge');
+          expect(verify).toBeCalledWith(expect.anything(), {
+            serverSigningKey: serverKP.publicKey(),
+            clientSigningKey: clientKP.publicKey(),
+            ensureTransactionIsSignedByClient: false,
+          });
+          spy.mockClear();
+          post.mockClear();
+          done();
+        });
     });
 
-    it('should POST the signed transaction hash back to the auth server', async (done) => {
+    it('should POST the signed transaction hash back to the auth server', (done) => {
       const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
       spy.mockReturnValueOnce(
         of({
@@ -180,7 +187,7 @@ describe('sep-0010 web authentication', () => {
         ),
       };
       const post = jest.fn(() => of(postTxResp));
-      (spy as any).post = post;
+      require('rxjs/ajax').ajax.post = post;
       const authServerURL = new url.URL('', 'https://mybank.com');
 
       const promise = authenticateClientSide(
@@ -202,6 +209,7 @@ describe('sep-0010 web authentication', () => {
             },
           );
           spy.mockClear();
+          post.mockClear();
           done();
         });
     });
