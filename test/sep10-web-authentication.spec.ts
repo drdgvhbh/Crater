@@ -4,7 +4,7 @@ import {
   ValidationError,
 } from '@/modules/sep10-web-authentication';
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
+import jwt, { verify } from 'jsonwebtoken';
 import moment from 'moment';
 import { of } from 'rxjs';
 import {
@@ -87,7 +87,7 @@ describe('sep-0010 web authentication', () => {
       expect(promise)
         .rejects.toThrowError(ValidationError)
         .then(() => {
-          spy.mockClear();
+          spy.mockRestore();
         });
     });
 
@@ -112,7 +112,7 @@ describe('sep-0010 web authentication', () => {
       } catch (err) {
         expect(err).not.toBeInstanceOf(ValidationError);
       } finally {
-        spy.mockClear();
+        spy.mockRestore();
       }
     });
 
@@ -127,17 +127,24 @@ describe('sep-0010 web authentication', () => {
     });
 
     it('should verify challenge transaction', (done) => {
-      const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
-      spy.mockImplementationOnce(() =>
+      const jwtSpy = jest.spyOn(require('jsonwebtoken'), 'decode');
+      jwtSpy.mockImplementation(jest.fn(() => ({})));
+      const ajaxSpy = jest.spyOn(require('rxjs/ajax'), 'ajax');
+      ajaxSpy.mockImplementationOnce(() =>
         of({
           response: {
             transaction: txe.toEnvelope().toXDR('base64'),
           },
         }),
       );
-      const post = jest.fn(() => of({}));
+      const post = jest.fn(() =>
+        of({
+          response: {
+            token: 'some token',
+          },
+        }),
+      );
       require('rxjs/ajax').ajax.post = post;
-      //  ((spy as jest.Mock).mock as any).post = jest.fn(() => of());
       const authServerURL = new url.URL('', 'https://mybank.com');
       const promise = authenticateClientSide(
         authServerURL,
@@ -153,15 +160,17 @@ describe('sep-0010 web authentication', () => {
             clientSigningKey: clientKP.publicKey(),
             ensureTransactionIsSignedByClient: false,
           });
-          spy.mockClear();
-          post.mockClear();
+          jwtSpy.mockRestore();
+          ajaxSpy.mockRestore();
           done();
         });
     });
 
     it('should POST the signed transaction hash back to the auth server', (done) => {
-      const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
-      spy.mockReturnValueOnce(
+      const jwtSpy = jest.spyOn(require('jsonwebtoken'), 'decode');
+      jwtSpy.mockImplementation(jest.fn(() => ({})));
+      const ajaxSpy = jest.spyOn(require('rxjs/ajax'), 'ajax');
+      ajaxSpy.mockReturnValueOnce(
         of({
           response: {
             transaction: txe.toEnvelope().toXDR('base64'),
@@ -170,21 +179,23 @@ describe('sep-0010 web authentication', () => {
       );
 
       const postTxResp = {
-        token: jwt.sign(
-          {
-            iss: 'https://some-anchor.com',
-            sub: clientKP.publicKey,
-            iat: moment().unix(),
-            exp: moment()
-              .add(1, 'day')
-              .unix(),
-            jti: () => {
-              txe.sign(clientKP);
-              return txe.hash().toString('base64');
+        response: {
+          token: jwt.sign(
+            {
+              iss: 'https://some-anchor.com',
+              sub: clientKP.publicKey,
+              iat: moment().unix(),
+              exp: moment()
+                .add(1, 'day')
+                .unix(),
+              jti: () => {
+                txe.sign(clientKP);
+                return txe.hash().toString('base64');
+              },
             },
-          },
-          serverKP.secret(),
-        ),
+            serverKP.secret(),
+          ),
+        },
       };
       const post = jest.fn(() => of(postTxResp));
       require('rxjs/ajax').ajax.post = post;
@@ -196,7 +207,7 @@ describe('sep-0010 web authentication', () => {
         serverKP.publicKey(),
       ).toPromise();
       expect(promise)
-        .resolves.toEqual(postTxResp)
+        .resolves.toEqual(postTxResp.response.token)
         .then(() => {
           txe.sign(clientKP);
           const signedTxe = txe.toEnvelope();
@@ -208,8 +219,70 @@ describe('sep-0010 web authentication', () => {
               'content-type': 'application/json',
             },
           );
-          spy.mockClear();
-          post.mockClear();
+          jwtSpy.mockRestore();
+          ajaxSpy.mockRestore();
+          done();
+        });
+    });
+
+    it('should validate the response', (done) => {
+      const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
+      spy.mockReturnValueOnce(
+        of({
+          response: {
+            transaction: txe.toEnvelope().toXDR('base64'),
+          },
+        }),
+      );
+
+      const postTxResp = {};
+      const post = jest.fn(() => of(postTxResp));
+      require('rxjs/ajax').ajax.post = post;
+      const authServerURL = new url.URL('', 'https://mybank.com');
+
+      const promise = authenticateClientSide(
+        authServerURL,
+        clientKP,
+        serverKP.publicKey(),
+      ).toPromise();
+      expect(promise)
+        .rejects.toThrowError(ValidationError)
+        .then(() => {
+          spy.mockRestore();
+          post.mockRestore();
+          done();
+        });
+    });
+
+    it('should validate the token is decodable', (done) => {
+      const spy = jest.spyOn(require('rxjs/ajax'), 'ajax');
+      spy.mockReturnValueOnce(
+        of({
+          response: {
+            transaction: txe.toEnvelope().toXDR('base64'),
+          },
+        }),
+      );
+
+      const postTxResp = {
+        response: {
+          token: 'lol',
+        },
+      };
+      const post = jest.fn(() => of(postTxResp));
+      require('rxjs/ajax').ajax.post = post;
+      const authServerURL = new url.URL('', 'https://mybank.com');
+
+      const promise = authenticateClientSide(
+        authServerURL,
+        clientKP,
+        serverKP.publicKey(),
+      ).toPromise();
+      expect(promise)
+        .rejects.toThrowError(ValidationError)
+        .then(() => {
+          spy.mockRestore();
+          post.mockRestore();
           done();
         });
     });
