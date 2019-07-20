@@ -4,8 +4,8 @@ import moment, { Moment } from 'moment';
 import { createSelector } from 'reselect';
 import StellarHDWallet from 'stellar-hd-wallet';
 import { Keypair } from 'stellar-sdk';
-import { isPaymentOperation } from '../../third-party/stellar';
-import { RootState } from '../configureStore';
+import { isPaymentOperation } from '../third-party/stellar';
+import { RootState } from './configureStore';
 
 const STROOP_TO_XLM_EXCHANGE_RATE = 0.0000001;
 
@@ -246,4 +246,11 @@ export const pendingTransaction = createSelector(
         deriveExchangeRate('xlm', 'usd', rates),
     },
   }),
+);
+
+export const horizon = (state: RootState) => state.horizon;
+
+export const horizonServerURL = createSelector(
+  horizon,
+  (h) => h.serverURL,
 );

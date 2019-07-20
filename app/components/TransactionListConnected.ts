@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from '../store/configureStore';
-import { detailedTransactions } from '../store/state/selectors';
+import { detailedTransactions } from '../store/selectors';
 import TransactionList from './TransactionList';
 
 const mapStateToProps = (state: RootState) => ({

@@ -23,7 +23,7 @@ import {
   FeeConnected,
 } from '../components';
 import { Asset } from '../store/state/reducer';
-import { stroopToXLM } from '../store/state/selectors';
+import { stroopToXLM } from '../store/selectors';
 import { MoneyPageActions, MoneyPageState } from './MoneyPageConnected';
 
 const styles = () =>

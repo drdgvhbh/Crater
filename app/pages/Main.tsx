@@ -19,7 +19,7 @@ import StellarHDWallet from 'stellar-hd-wallet';
 import { CryptoCurrencyIcon } from '../components';
 import CopyToClipboardTooltip from '../components/CopyToClipboardButton';
 import TruncatedPublicKey from '../components/TruncatedPublicKey';
-import { account } from '../store/state/selectors';
+import { account } from '../store/selectors';
 import { AnchorPageConnected } from './AnchorPageConnected';
 import HomePage from './HomePage';
 import { MoneyPageConnected } from './MoneyPageConnected';

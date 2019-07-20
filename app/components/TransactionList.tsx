@@ -14,7 +14,7 @@ import {
 import startcase from 'lodash.startcase';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { detailedTransactions } from '../store/state/selectors';
+import { detailedTransactions } from '../store/selectors';
 import { TransactionOperationDetailsConnected } from './TransactionOperationDetailsConnected';
 
 const styles = (theme: Theme) =>

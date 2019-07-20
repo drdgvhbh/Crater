@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { RootState } from '../store/configureStore';
-import { account, mnemonic } from '../store/state/selectors';
+import { account, mnemonic } from '../store/selectors';
 import MainPage from './Main';
 
 const mapStateToProps = (state: RootState) => ({

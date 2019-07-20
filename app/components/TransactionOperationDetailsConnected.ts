@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { RootState } from '../store/configureStore';
 import { OperationRecord } from '../store/state/reducer';
-import { allOperations, publicKey } from '../store/state/selectors';
+import { allOperations, publicKey } from '../store/selectors';
 import TransactionOperationDetails from './TransactionOperationDetails';
 
 export type OperationsSelector = (operationIDs: string[]) => OperationRecord[];

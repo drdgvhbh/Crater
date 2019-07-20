@@ -7,7 +7,7 @@ import {
   accountAssets,
   baseFee,
   exchangeRates,
-} from '../store/state/selectors';
+} from '../store/selectors';
 import MoneyPage from './MoneyPage';
 
 const mapStateToProps = (state: RootState) => ({

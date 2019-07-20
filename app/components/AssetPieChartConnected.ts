@@ -6,7 +6,7 @@ import {
   accountAssetsInUSD,
   colorPalette,
   totalAccountValueInUSD,
-} from '../store/state/selectors';
+} from '../store/selectors';
 import AssetPieChart from './AssetPieChart';
 
 const assetsSelector = createSelector(

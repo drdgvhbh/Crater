@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { RootState } from '../store/configureStore';
-import { pendingTransaction } from '../store/state/selectors';
+import { pendingTransaction } from '../store/selectors';
 import SigningPage from './SigningPage';
 
 const mapStateToProps = (state: RootState) => {

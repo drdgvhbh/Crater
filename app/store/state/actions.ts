@@ -1,5 +1,6 @@
 import { ActionsUnion, createAction } from '@martin_hotell/rex-tils';
 import BigNumber from 'bignumber.js';
+import StellarHDWallet from 'stellar-hd-wallet';
 import StellarSDK from 'stellar-sdk';
 import { OperationRecords, TransactionRecord } from './reducer';
 
@@ -26,6 +27,12 @@ export const SEND_TRANSACTION_SUCCEEDED = 'SEND_TRANSACTION_SUCCEEDED';
 export const SEND_TRANSACTION_FAILED = 'SEND_TRANSACTION_FAILED';
 export const SETUP_EVENT_LISTENERS = 'SETUP_EVENT_LISTENERS';
 export const DO_NOTHING = 'DO_NOTHING';
+export const SET_ACCOUNT_NUMBER = 'SET_ACCOUNT_NUMBER';
+
+export interface SetAccountNumberParams {
+  accountNumber: number;
+  hdWallet: StellarHDWallet;
+}
 
 export interface SetAccountsPayload {
   accounts: Array<{
@@ -58,6 +65,8 @@ export interface SendTransactionPayload {
 }
 
 export const Actions = {
+  setAccountNumber: (params: SetAccountNumberParams) =>
+    createAction(SET_ACCOUNT_NUMBER, params),
   login: (mnemonic: string) => createAction(LOGIN, mnemonic),
   fetchPreexistingMnemonic: () => createAction(FETCH_PREEXISTING_MNEMONIC),
   validateMnemonic: (mnemonic: string) =>

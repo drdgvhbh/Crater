@@ -4,7 +4,7 @@ import {
   deriveExchangeRate,
   exchangeRates,
   stroopToXLM,
-} from '../store/state/selectors';
+} from '../store/selectors';
 import Fee from './Fee';
 
 const mapStateToProps = (state: RootState) => {

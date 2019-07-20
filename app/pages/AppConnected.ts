@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { RootState } from '../store/configureStore';
 import { walletActions } from '../store/state';
-import { isMnemonicValid } from '../store/state/selectors';
+import { isMnemonicValid } from '../store/selectors';
 import App from './App';
 
 const mapStateToProps = (state: RootState) => ({

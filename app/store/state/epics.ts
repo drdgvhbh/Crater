@@ -15,14 +15,14 @@ import StellarSDK from 'stellar-sdk';
 import { SimpleApi } from '../../third-party/coingecko';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
-import { OperationRecords, TransactionRecord } from './reducer';
 import {
   accountNumber as getAccountNumber,
   assetTypes as getAssetTypes,
   baseFee,
   mnemonic as getMnemonic,
   publicKey as getPublicKey,
-} from './selectors';
+} from '../selectors';
+import { OperationRecords, TransactionRecord } from './reducer';
 import { epics as signatureEpics } from './signature';
 
 const stellarServer = new StellarSDK.Server(
