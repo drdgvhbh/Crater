@@ -23,6 +23,7 @@
     "no-console": {
       "severity": "warning"
     },
+    "no-bitwise": false,
     "max-line-length": [true, 120],
     "object-literal-key-quotes": [true, "single"],
     "typedef": [true, "call-signature", "parameter", "member-variable-declaration"]

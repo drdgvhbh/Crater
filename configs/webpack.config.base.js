@@ -40,7 +40,7 @@ export default {
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',
-      '@/*': path.join(__dirname, '..', 'app'),
+      '@': path.join(__dirname, '..', 'app'),
     },
     extensions: ['.js', '.ts', '.tsx', '.json'],
   },

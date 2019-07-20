@@ -1,3 +1,4 @@
+import { AnchorPageConnected } from './pages/AnchorPageConnected';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
@@ -23,6 +24,7 @@ const Router = ({
         <Route path={routes.HOME} exact component={AppPage} />
         <Route path={routes.MAIN} exact component={MainPage} />
         <Route path={routes.NEW_WALLET} exact component={NewWalletPage} />
+        <Route path={routes.ANCHORS} exact component={AnchorPageConnected} />
       </Switch>
     </>
   );

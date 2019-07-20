@@ -1,6 +1,6 @@
 import { ActionsUnion, createAction } from '@martin_hotell/rex-tils';
 import { Moment } from 'moment';
-import { Operation } from './reducer';
+import { Operation, Signature } from './reducer';
 
 export const DO_NOTHING = 'DO_NOTHING';
 export const SET_SIGNING_TXN_DETAILS = 'SET_TXN_DETAILS';
@@ -12,6 +12,7 @@ export interface SetSignatureTxnDetailsParams {
   readonly fee: number;
   readonly timebounds: [Moment, Moment];
   readonly operations: Operation[];
+  readonly signatures: Signature[];
 }
 
 export const Actions = {

@@ -13,6 +13,10 @@ export interface ManageDataOperation {
 }
 
 export type Operation = ManageDataOperation;
+export interface Signature {
+  hint: string;
+  value: string;
+}
 
 export interface PendingTransaction {
   readonly sourceAccount: string;
@@ -21,6 +25,7 @@ export interface PendingTransaction {
   readonly fee: number;
   readonly timebounds: [string, string];
   readonly operations: Operation[];
+  readonly signatures: Signature[];
 }
 
 export const initialState: PendingTransaction = {
@@ -30,6 +35,7 @@ export const initialState: PendingTransaction = {
   fee: 0,
   timebounds: [moment.unix(0).toISOString(), moment.unix(0).toISOString()],
   operations: [],
+  signatures: [],
 };
 const reducer = (state = initialState, action: fromActions.Actions) =>
   produce(state, (draft) => {
@@ -43,6 +49,8 @@ const reducer = (state = initialState, action: fromActions.Actions) =>
         draft.timebounds[0] = timebounds[0].toISOString();
         draft.timebounds[1] = timebounds[1].toISOString();
         draft.fee = action.payload.fee;
+        draft.signatures.length = 0;
+        draft.signatures.push(...action.payload.signatures);
         if (action.payload.memo) {
           draft.memo = action.payload.memo;
         }

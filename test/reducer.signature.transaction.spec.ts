@@ -7,8 +7,8 @@ import { SetSignatureTxnDetailsParams } from '@/store/state/signature/transactio
 import crypto from 'crypto';
 import moment from 'moment';
 
-describe('Reducer Tests', () => {
-  describe('Signature Transaction Reducer', () => {
+describe('reducers', () => {
+  describe('signature transaction', () => {
     let op: Operation;
     let txnDetails: SetSignatureTxnDetailsParams;
 

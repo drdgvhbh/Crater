@@ -1,5 +1,6 @@
 {
   "HOME": "/",
   "MAIN": "/main",
-  "NEW_WALLET": "/new-wallet"
+  "NEW_WALLET": "/new-wallet",
+  "ANCHORS": "/anchors"
 }

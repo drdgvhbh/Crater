@@ -17,6 +17,17 @@ const theme = createMuiTheme({
       dark: '#102027',
     },
   },
+  typography: {
+    fontFamily: 'Open Sans',
+    h1: {
+      fontSize: '36px',
+      fontWeight: 'lighter',
+    },
+    h2: {
+      fontSize: '24px',
+      fontWeight: 'normal',
+    },
+  },
 });
 
 interface Props {

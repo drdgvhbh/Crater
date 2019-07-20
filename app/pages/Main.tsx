@@ -1,5 +1,6 @@
 import {
   Button,
+  createStyles,
   Icon,
   Paper,
   Tab,
@@ -8,8 +9,8 @@ import {
   Typography,
   withStyles,
   WithStyles,
-  createStyles,
 } from '@material-ui/core';
+import Anchor from '@material-ui/icons/AccountBalance';
 import Signature from '@material-ui/icons/Edit';
 import Home from '@material-ui/icons/Home';
 import XLM from 'cryptocoins-icons/SVG/XLM.svg';
@@ -19,6 +20,7 @@ import { CryptoCurrencyIcon } from '../components';
 import CopyToClipboardTooltip from '../components/CopyToClipboardButton';
 import TruncatedPublicKey from '../components/TruncatedPublicKey';
 import { account } from '../store/state/selectors';
+import { AnchorPageConnected } from './AnchorPageConnected';
 import HomePage from './HomePage';
 import { MoneyPageConnected } from './MoneyPageConnected';
 import { SigningPageConnected } from './SigningPageConnected';
@@ -64,6 +66,9 @@ const MainPage = ({
           <Tooltip title={'Signature'}>
             <Tab icon={<Signature />} />
           </Tooltip>
+          <Tooltip title={'Anchors'}>
+            <Tab icon={<Anchor />} />
+          </Tooltip>
         </Tabs>
       </Paper>
       <div className={classes.topNav}>
@@ -81,6 +86,7 @@ const MainPage = ({
       {tab === 0 && <HomePage />}
       {tab === 1 && <MoneyPageConnected />}
       {tab === 2 && <SigningPageConnected />}
+      {tab === 3 && <AnchorPageConnected />}
     </div>
   );
 };

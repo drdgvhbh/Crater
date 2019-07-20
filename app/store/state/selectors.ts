@@ -2,7 +2,8 @@ import BigNumber from 'bignumber.js';
 import gradstop from 'gradstop';
 import moment, { Moment } from 'moment';
 import { createSelector } from 'reselect';
-import StellarSDK from 'stellar-sdk';
+import StellarHDWallet from 'stellar-hd-wallet';
+import { Keypair } from 'stellar-sdk';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
 
@@ -46,6 +47,15 @@ export const accountNumber = createSelector(
 export const accounts = createSelector(
   wallet,
   (w) => (w.accounts ? w.accounts : {}),
+);
+export const signingKeypair = createSelector(
+  mnemonic,
+  accountNumber,
+  (m, n) => {
+    const accountKP = StellarHDWallet.fromMnemonic(m).getKeypair(n);
+
+    return Keypair.fromSecret(accountKP.secret());
+  },
 );
 export const publicKey = createSelector(
   accounts,

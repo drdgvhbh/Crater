@@ -100,12 +100,12 @@ if (!hasLock) {
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
     mainWindow.webContents.on('did-finish-load', () => {
+      console.log(process.argv);
+      mainWindow.webContents.send('open', process.argv);
+
       if (!mainWindow) {
         throw new Error('"mainWindow" is not defined');
       }
-
-      console.log(process.argv);
-      mainWindow.webContents.send('open', process.argv);
 
       if (process.env.START_MINIMIZED) {
         mainWindow.minimize();

@@ -26,6 +26,7 @@ import StellarSDK from 'stellar-sdk';
 import { SimpleApi } from '../../third-party/coingecko';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
+import { anchorEpics } from './anchor';
 import { OperationRecords, TransactionRecord } from './reducer';
 import {
   accountNumber as getAccountNumber,
@@ -234,11 +235,11 @@ export const loadTransactionsEpic = (
                 map((opsRecords) =>
                   opsRecords.map((opRec) => {
                     if (isPaymentOperation(opRec)) {
-                      const asset_type =
+                      const assetType =
                         opRec.asset_type === 'native'
                           ? 'xlm'
                           : opRec.asset_type;
-                      return { ...opRec, asset_type };
+                      return { ...opRec, asset_type: assetType };
                     }
 
                     return { ...opRec };

@@ -4,15 +4,19 @@ import {
   createStyles,
   Grid,
   InputLabel,
+  List,
+  ListItem,
+  ListItemText,
   TextField as NativeTextField,
   Typography,
-  withStyles,
   WithStyles,
+  withStyles,
 } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField';
 import { Moment } from 'moment';
 import React from 'react';
 import { Operation } from '../store/state/signature/transaction';
+import { Signature } from '../store/state/signature/transaction/reducer';
 import CopyToClipboardTooltip from './CopyToClipboardButton';
 import { FeeConnected } from './FeeConnected';
 import ManageDataOperation from './ManageDataOperation';
@@ -33,6 +37,7 @@ export interface TransactionProps {
     readonly fee: number;
     readonly timebounds: [Moment, Moment];
     readonly operations: Operation[];
+    readonly signatures: Signature[];
   };
 }
 
@@ -48,6 +53,11 @@ const TextField = (props: TextFieldProps) => {
   );
 };
 
+const truncatePubKey = (pubKey: string, percentage: number = 0.35) =>
+  `${pubKey.slice(0, pubKey.length * percentage)}...${pubKey.slice(
+    pubKey.length - 10,
+  )}`;
+
 const UnverifiedTransaction = (
   props: TransactionProps & WithStyles<typeof styles>,
 ) => {
@@ -59,16 +69,10 @@ const UnverifiedTransaction = (
       memo,
       fee,
       timebounds,
-      // timeBounds,
-      // fee,
-      // sequence: sequenceNumber,
-      // source: sourceAccount,
+      signatures,
     },
   } = props;
-  const sourceAccountTruncated = `${sourceAccount.slice(
-    0,
-    sourceAccount.length * 0.45,
-  )}...${sourceAccount.slice(sourceAccount.length - 4)}`;
+  const sourceAccountTruncated = truncatePubKey(sourceAccount);
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -141,6 +145,20 @@ const UnverifiedTransaction = (
             </Box>
           );
         })}
+      </Grid>
+      <Grid item xs={12}>
+        <InputLabel>Signers</InputLabel>
+        {signatures.map((sig) => (
+          <List>
+            <ListItem>
+              <TextField
+                fullWidth
+                multiline
+                value={truncatePubKey(sig.hint, 0.3)}
+              />
+            </ListItem>
+          </List>
+        ))}
       </Grid>
     </Grid>
   );
