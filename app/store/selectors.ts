@@ -4,6 +4,7 @@ import moment, { Moment } from 'moment';
 import { createSelector } from 'reselect';
 import StellarHDWallet from 'stellar-hd-wallet';
 import { Keypair } from 'stellar-sdk';
+import StellarSDK from 'stellar-sdk';
 import { isPaymentOperation } from '../third-party/stellar';
 import { RootState } from './configureStore';
 
@@ -253,4 +254,8 @@ export const horizon = (state: RootState) => state.horizon;
 export const horizonServerURL = createSelector(
   horizon,
   (h) => h.serverURL,
+);
+export const horizonServer = createSelector(
+  horizonServerURL,
+  (url) => new StellarSDK.Server(url),
 );

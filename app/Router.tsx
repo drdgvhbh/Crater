@@ -1,19 +1,22 @@
-import { AnchorPageConnected } from './pages/AnchorPageConnected';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { AppPage, MainPage, NewWalletPage } from './pages';
+import { AnchorPageConnected } from './pages/AnchorPageConnected';
 import routes from './routes.json';
 import { RootState } from './store/configureStore';
+import { networkActions } from './store/network';
 import { walletActions } from './store/state/index';
 
 const Router = ({
   fetchBaseFee,
   fetchPreexistingMnemonic,
   setupEventListeners,
+  setNetwork,
 }: RouterActions) => {
   useEffect(() => {
-    fetchBaseFee();
+    setNetwork();
+    fetchBaseFee(); 
     fetchPreexistingMnemonic();
     setupEventListeners();
   }, []);
@@ -36,6 +39,7 @@ const dispatchProps = {
   fetchPreexistingMnemonic: walletActions.fetchPreexistingMnemonic,
   fetchBaseFee: walletActions.fetchBaseFee,
   setupEventListeners: walletActions.setupEvenListeners,
+  setNetwork: networkActions.useTestnet,
 };
 
 const RouterConnected = connect(

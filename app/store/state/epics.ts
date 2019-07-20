@@ -22,13 +22,9 @@ import {
   mnemonic as getMnemonic,
   publicKey as getPublicKey,
 } from '../selectors';
+import { horizonServer as getHorizonServer } from '../selectors';
 import { OperationRecords, TransactionRecord } from './reducer';
 import { epics as signatureEpics } from './signature';
-
-const stellarServer = new StellarSDK.Server(
-  'https://horizon-testnet.stellar.org',
-);
-StellarSDK.Network.useTestNetwork();
 
 const simpleApi = new SimpleApi();
 
@@ -123,6 +119,7 @@ export const setMnemonicEpic = (
     flatMap(([_, state]) => {
       const mnemonic = getMnemonic(state);
       const wallet = StellarHDWallet.fromMnemonic(mnemonic, undefined);
+      const horizonServer = getHorizonServer(state);
 
       return from(of(1)).pipe(
         map((data) => [0] as number[]),
@@ -130,7 +127,7 @@ export const setMnemonicEpic = (
           return forkJoin(
             savedAccounts.map((accountNumber) => {
               const publicKey = wallet.getPublicKey(accountNumber);
-              return from(stellarServer.loadAccount(publicKey)).pipe(
+              return from(horizonServer.loadAccount(publicKey)).pipe(
                 map(({ balances: assets }) =>
                   assets.map((asset) => ({
                     type:
@@ -203,9 +200,10 @@ export const loadTransactionsEpic = (
     withLatestFrom(state$),
     flatMap(([action, state]) => {
       const publicKey = getPublicKey(state);
+      const horizonServer = getHorizonServer(state);
 
       return from(
-        stellarServer
+        horizonServer
           .transactions()
           .forAccount(publicKey)
           .limit(action.payload.count)
@@ -278,11 +276,13 @@ export const loadBaseFeeEpic = (
   action$.pipe(
     ofType(fromActions.FETCH_BASE_FEE),
     withLatestFrom(state$),
-    flatMap(([action, state]) =>
-      from(stellarServer.fetchBaseFee()).pipe(
+    flatMap(([action, state]) => {
+      const horizonServer = getHorizonServer(state);
+
+      return from(horizonServer.fetchBaseFee()).pipe(
         flatMap((baseFee) => of(fromActions.Actions.setBaseFee(baseFee))),
-      ),
-    ),
+      );
+    }),
   );
 
 export const sendTransactionEpic = (
@@ -298,11 +298,12 @@ export const sendTransactionEpic = (
       const wallet = StellarHDWallet.fromMnemonic(mnemonic, undefined);
       const accountNumber = getAccountNumber(state);
       const keyPair = wallet.getKeypair(accountNumber);
+      const horizonServer = getHorizonServer(state);
 
       const {
         payload: { recipient, asset, memo },
       } = action;
-      return from(stellarServer.loadAccount(keyPair.publicKey())).pipe(
+      return from(horizonServer.loadAccount(keyPair.publicKey())).pipe(
         flatMap((account) => {
           const transactionBuilder = new StellarSDK.TransactionBuilder(
             account,
@@ -330,7 +331,7 @@ export const sendTransactionEpic = (
           );
           transaction.sign(signingKeyPair);
 
-          return from(stellarServer.submitTransaction(transaction)).pipe(
+          return from(horizonServer.submitTransaction(transaction)).pipe(
             flatMap((result) =>
               of(fromActions.Actions.sendTransactionSucceeded(result)),
             ),
