@@ -2,31 +2,19 @@ import * as fromActions from './actions';
 
 import { ofType } from '@martin_hotell/rex-tils';
 import { push } from 'connected-react-router';
-import electron from 'electron';
 import keytar from 'keytar';
-import queryString from 'query-string';
 import {
   ActionsObservable,
   combineEpics,
   StateObservable,
 } from 'redux-observable';
-import {
-  concat,
-  defer,
-  forkJoin,
-  from,
-  fromEventPattern,
-  iif,
-  of,
-  pipe,
-} from 'rxjs';
+import { concat, forkJoin, from, of } from 'rxjs';
 import { catchError, flatMap, map, tap, withLatestFrom } from 'rxjs/operators';
 import StellarHDWallet from 'stellar-hd-wallet';
 import StellarSDK from 'stellar-sdk';
 import { SimpleApi } from '../../third-party/coingecko';
 import { isPaymentOperation } from '../../third-party/stellar';
 import { RootState } from '../configureStore';
-import { anchorEpics } from './anchor';
 import { OperationRecords, TransactionRecord } from './reducer';
 import {
   accountNumber as getAccountNumber,
@@ -41,8 +29,6 @@ const stellarServer = new StellarSDK.Server(
   'https://horizon-testnet.stellar.org',
 );
 StellarSDK.Network.useTestNetwork();
-
-const MNEMONIC_KEY = 'mnemonic';
 
 const simpleApi = new SimpleApi();
 
