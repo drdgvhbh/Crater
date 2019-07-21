@@ -1,6 +1,7 @@
 import produce from 'immer';
 import StellarSdk from 'stellar-sdk';
 import * as fromActions from './actions';
+import { balanceLineReducer } from './balance-line';
 import { signatureReducer } from './signature';
 
 export interface AssetWithUSDValue extends Asset {
@@ -116,7 +117,9 @@ export const walletReducer = (
     }
   });
 
-type CombinedState = State & { signature: ReturnType<typeof signatureReducer> };
+type CombinedState = State & {
+  signature: ReturnType<typeof signatureReducer>;
+} & { balances: ReturnType<typeof balanceLineReducer> };
 
 export const reducer = (
   state = { ...initialState } as CombinedState,
@@ -125,5 +128,6 @@ export const reducer = (
   return {
     ...walletReducer(state, action),
     signature: signatureReducer(state.signature, action as any),
+    balances: balanceLineReducer(state.balances, action as any),
   };
 };

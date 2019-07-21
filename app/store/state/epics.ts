@@ -23,6 +23,7 @@ import {
   publicKey as getPublicKey,
 } from '../selectors';
 import { horizonServer as getHorizonServer } from '../selectors';
+import { balanceLineEpics } from './balance-line';
 import { OperationRecords, TransactionRecord } from './reducer';
 import { epics as signatureEpics } from './signature';
 
@@ -146,9 +147,19 @@ export const setMnemonicEpic = (
         }),
       );
     }),
-    flatMap((data) =>
+    withLatestFrom(state$),
+    flatMap(([data, state]) =>
       concat(
         ...[
+          of(
+            fromActions.Actions.setAccountNumber({
+              accountNumber: 0,
+              hdWallet: StellarHDWallet.fromMnemonic(
+                getMnemonic(state),
+                undefined,
+              ),
+            }),
+          ),
           of(fromActions.Actions.setAccounts({ accounts: data })),
           of(fromActions.Actions.updateExchangeRates()),
           of(fromActions.Actions.loadTransactions({ count: LOAD_TRX_COUNT })),
@@ -356,4 +367,5 @@ export default combineEpics(
   loadBaseFeeEpic,
   sendTransactionEpic,
   signatureEpics,
+  balanceLineEpics,
 );
