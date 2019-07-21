@@ -1,9 +1,9 @@
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 import { combineReducers } from 'redux';
+import { anchorReducer } from './anchor';
 import { horizonReducer } from './horizon';
 import { walletReducer } from './state';
-import { anchorReducer } from './state/anchor';
 
 export const createRootReducer = (history: History) =>
   combineReducers({

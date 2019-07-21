@@ -1,13 +1,12 @@
-import AnchorsPage from './AnchorsPage';
 import React from 'react';
+import AnchorsPage from './AnchorsPage';
 
 import { connect } from 'react-redux';
 
+import { anchorActions } from '../store/anchor';
 import { RootState } from '../store/configureStore';
-import { anchorActions } from '../store/state/anchor';
 
-const mapStateToProps = (state: RootState) => ({
-});
+const mapStateToProps = (state: RootState) => ({});
 
 const dispatchProps = {
   addAnchor: anchorActions.addAnchor,

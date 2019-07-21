@@ -23,7 +23,7 @@ import {
   mnemonic as getMnemonic,
   publicKey,
   signingKeypair,
-} from '../../selectors';
+} from '../selectors';
 import * as fromActions from './actions';
 
 interface StellarTOML {
