@@ -22,7 +22,7 @@ import TruncatedPublicKey from '../components/TruncatedPublicKey';
 import { account } from '../store/selectors';
 import { AnchorPageConnected } from './AnchorPageConnected';
 import HomePage from './HomePage';
-import { MoneyPageConnected } from './MoneyPageConnected';
+import { PaymentPageConnected } from './PaymentPageConnected';
 import { SigningPageConnected } from './SigningPageConnected';
 
 const styles = () =>
@@ -84,7 +84,7 @@ const MainPage = ({
         </CopyToClipboardTooltip>
       </div>
       {tab === 0 && <HomePage />}
-      {tab === 1 && <MoneyPageConnected />}
+      {tab === 1 && <PaymentPageConnected />}
       {tab === 2 && <SigningPageConnected />}
       {tab === 3 && <AnchorPageConnected />}
     </div>

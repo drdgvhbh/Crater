@@ -24,7 +24,7 @@ import {
 } from '../components';
 import { Asset } from '../store/state/reducer';
 import { stroopToXLM } from '../store/selectors';
-import { MoneyPageActions, MoneyPageState } from './MoneyPageConnected';
+import { PaymentPageActions, PaymentPageState } from './PaymentPageConnected';
 
 const styles = () =>
   createStyles({
@@ -40,8 +40,8 @@ const styles = () =>
     },
   });
 
-const MoneyPage = (
-  props: MoneyPageState & MoneyPageActions & WithStyles<typeof styles>,
+const PaymentPage = (
+  props: PaymentPageState & PaymentPageActions & WithStyles<typeof styles>,
 ) => {
   const { classes, assets, exchangeRates, baseFee, sendTransaction } = props;
   const firstAsset = assets.length > 0 ? assets[0] : undefined;
@@ -248,4 +248,4 @@ const MoneyPage = (
   );
 };
 
-export default withStyles(styles)(MoneyPage);
+export default withStyles(styles)(PaymentPage);

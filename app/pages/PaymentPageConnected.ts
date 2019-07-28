@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
 
 import { RootState } from '../store/configureStore';
-import { walletActions } from '../store/state';
 import {
   account,
   accountAssets,
   baseFee,
   exchangeRates,
 } from '../store/selectors';
-import MoneyPage from './MoneyPage';
+import { walletActions } from '../store/state';
+import PaymentPage from './PaymentPage';
 
 const mapStateToProps = (state: RootState) => ({
   assets: accountAssets(state),
@@ -21,10 +21,10 @@ const dispatchProps = {
   sendTransaction: walletActions.sendTransaction,
 };
 
-export const MoneyPageConnected = connect(
+export const PaymentPageConnected = connect(
   mapStateToProps,
   dispatchProps,
-)(MoneyPage);
+)(PaymentPage);
 
-export type MoneyPageState = ReturnType<typeof mapStateToProps>;
-export type MoneyPageActions = typeof dispatchProps;
+export type PaymentPageState = ReturnType<typeof mapStateToProps>;
+export type PaymentPageActions = typeof dispatchProps;
