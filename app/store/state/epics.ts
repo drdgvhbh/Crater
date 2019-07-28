@@ -9,7 +9,13 @@ import {
   StateObservable,
 } from 'redux-observable';
 import { concat, forkJoin, from, of } from 'rxjs';
-import { catchError, flatMap, map, tap, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  flatMap,
+  map,
+  withLatestFrom,
+} from 'rxjs/operators';
 import StellarHDWallet from 'stellar-hd-wallet';
 import StellarSDK from 'stellar-sdk';
 import { SimpleApi } from '../../third-party/coingecko';
@@ -51,7 +57,7 @@ export const validMnemonicEpic = (
     flatMap(({ payload: mnemonic }) => {
       return of(mnemonic);
     }),
-    flatMap((mnemonic) => {
+    concatMap((mnemonic) => {
       const actions: fromActions.Actions[] = [];
       if (!StellarHDWallet.validateMnemonic(mnemonic)) {
         actions.push(fromActions.Actions.validateMnemonicFailed());
@@ -132,7 +138,7 @@ export const setMnemonicEpic = (
                 map(({ balances: assets }) =>
                   assets.map((asset) => ({
                     type:
-                      asset.asset_type !== 'native' ? asset.asset_type : 'xlm',
+                      asset.asset_type !== 'native' ? asset.asset_code : 'xlm',
                     amount: Number(asset.balance),
                   })),
                 ),
@@ -148,7 +154,7 @@ export const setMnemonicEpic = (
       );
     }),
     withLatestFrom(state$),
-    flatMap(([data, state]) =>
+    concatMap(([data, state]) =>
       concat(
         ...[
           of(
@@ -183,7 +189,7 @@ export const updateExchangeRatesEpic = (
 
           return simpleApi
             .simplePriceGet({
-              ids: mappedAssetType,
+              ids: mappedAssetType.toLowerCase(),
               vsCurrencies: 'usd',
             })
             .pipe(
@@ -248,7 +254,7 @@ export const loadTransactionsEpic = (
             ),
           ),
         ),
-        flatMap((trxs) => {
+        concatMap((trxs) => {
           const operations: OperationRecords = {};
           const transactions: TransactionRecord[] = [];
 
