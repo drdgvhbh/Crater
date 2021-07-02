@@ -308,7 +308,7 @@
     "rxjs": "^6.3.3",
     "source-map-support": "^0.5.9",
     "stellar-hd-wallet": "0.0.10",
-    "stellar-sdk": "^1.0.5",
+    "stellar-sdk": "^8.2.3",
     "tslib": "^1.10.0"
   },
   "devEngines": {
